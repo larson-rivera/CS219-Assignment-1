@@ -1,12 +1,12 @@
-CS219, Spring 2022, Professor Poplin
-Larson Rivera, University of Nevada, Reno
+CS219, Spring 2022, Professor Poplin :: 
+Larson Rivera, University of Nevada, Reno ::
 Last Modified on 1/27/2022
 
 ===Programming Assignment 1===
 
 ---Accessing Instructions---
 
-This program/assignment is available in a public github repository: 
+This program/assignment is available in a public github repository: https://github.com/larson-rivera/CS219-Assignment-1
 
 
 

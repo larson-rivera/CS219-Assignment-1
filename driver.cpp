@@ -16,7 +16,7 @@ string input[100]; // raw input;
 
 // Protoypes
 int successiveAddHex(string[], int);
-void hexPrint(uint64_t&);
+void hexPrint(uint32_t&);
 
 
 // MAIN FUNCTION--------------------------------------------------------------
@@ -69,4 +69,4 @@ int successiveAddHex(string arr[], int index) {
     return index-1;  // when new command detected, return modified index
 }
 
-void hexPrint(uint32_t& result) { cout << "Result: 0x" << hex << result << endl; }
+void hexPrint(uint32_t& result) { cout << "Result: 0x" << hex << result << endl; }  // Printing
