@@ -49,7 +49,7 @@ int main() {
 }
 
 int successiveAddHex(string arr[], int index) {
-    uint64_t cumulative = 0;
+    uint32_t cumulative = 0;
     index++;  // move to first operand, current index is still command
 
     while (arr[index][0] >= 48 && arr[index][0] <= 57) {  //ASCII range of numerical characters. Check to make sure not a command
@@ -69,4 +69,4 @@ int successiveAddHex(string arr[], int index) {
     return index-1;  // when new command detected, return modified index
 }
 
-void hexPrint(uint64_t& result) { cout << "Result: 0x" << hex << result << endl; }
+void hexPrint(uint32_t& result) { cout << "Result: 0x" << hex << result << endl; }

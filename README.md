@@ -1,33 +1,32 @@
-# Project Part 1 For CS219 Computer Organization
-> This project is designed to accept an input text file and analyze it for assembly code. The program then returns calculations specified by the input assembly.
-## Installation
-> Install Linux or the windows subsystem
-## Usage example
-> Navigate to build folder
-```sh
-$ make assembly_calculator
-$ ./assembly_calculator
+CS219, Spring 2022, Professor Poplin
+Larson Rivera, University of Nevada, Reno
+Last Modified on 1/27/2022
 
-> Welcome to the Calculator. Please enter a file for analysis: [name].txt
-```
-> Replace [name] with the name of your file. EX: testFile
-## Development setup
-Uses Linux Make. Makefile provided. Installation instructions provided below.
-```sh
-sudo apt-add-repository ppa:ubuntu-desktop/ubuntu-make
-sudo apt-get update
-sudo apt-get install ubuntu-make
-```
-## Release History
+===Programming Assignment 1===
 
-## Meta
-Larson Rivera -- larsriver@nevada.unr.edu
+---Accessing Instructions---
 
-Distributed under the MIT license. See ``LICENSE`` for more information.
+This program/assignment is available in a public github repository: 
 
-## Contributing
-1. Fork it (<github fork>)
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+
+
+---Build Instructions---
+
+Builds with Linux Make. Main target is 'assembly_calculator'
+    'Make all' will also suffice.
+
+
+
+---Usage Instructions---
+
+This program runs in-terminal and prompts the user to enter a filname with extension:
+    EX: tester.txt, or Programming-Assignment-1.txt
+
+The program will continue to prompt for a filename until it finds one it can open succesfully. Results displayed in-terminal.
+
+
+
+---Sources Used in Development---
+
+A GeeksForGeeks article on the StringStream class in the base library was used to understand and develop lines 58-61.
+    "StringStream in C++ for Decimal to Hexadecimal and back": https://www.geeksforgeeks.org/stringstream-c-decimal-hexadecimal-back/
