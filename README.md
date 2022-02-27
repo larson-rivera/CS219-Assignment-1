@@ -24,7 +24,7 @@ This program runs in-terminal and prompts the user to enter a filname with exten
     EX: input.txt
 
 The program will continue to prompt for a filename until it finds one it can open succesfully. Results displayed in-terminal.
-A demo prgram "input.txt" is provided.
+A demo file "input.txt" is provided.
 
 
 
