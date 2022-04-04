@@ -6,29 +6,29 @@
 #include <fstream>
 #include <sstream>
 
+#include "ALU.h"
+
 using namespace std;
 
 // Globals
+enum ALUCodes {ADD = 0, SUB, AND, ORR, XOR, NOT, ASR, LSR, LSL, MOV};
+string ALUCodec[10] = {"ADD", "SUB", "AND", "ORR", "XOR", "NOT", "ASR", "LSR", "LSL", "MOV"};
+
+enum Register {R0 = 0, R1, R2, R3, R4, R5, R6, R7};
+string RegCodec[8] = {"R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7"};
+
+// Prototypes
+uint32_t moveRegister(unsigned char, uint32_t);
+unsigned char stringToOpCode(string);
+unsigned char stringToRegister(string);
+uint32_t stringToHex(string);
+
 ifstream fin;  // Input stream
 
 string filename;
 string input[100]; // raw input;
 
-// Protoypes
-typedef uint32_t (*OpCodeFunction)(uint32_t, uint32_t);
-int successiveOpCode(string[], int, OpCodeFunction, bool);
-
-uint32_t ADD(uint32_t, uint32_t);  // sucerssive addative
-uint32_t AND(uint32_t, uint32_t);  // successive and-ing
-uint32_t ASR(uint32_t, uint32_t);
-uint32_t LSR(uint32_t, uint32_t); 
-uint32_t LSL(uint32_t, uint32_t);
-uint32_t NOT(uint32_t, uint32_t);
-uint32_t ORR(uint32_t, uint32_t);
-uint32_t SUB(uint32_t, uint32_t);
-uint32_t XOR(uint32_t, uint32_t);
-
-void hexPrint(uint32_t&);
+uint32_t regs[8] = {0};
 
 
 // MAIN FUNCTION--------------------------------------------------------------
@@ -50,75 +50,63 @@ int main() {
     }
     fin.close();                   //close the file when done
 
-    // Processing Assembly
-    int i = 0;
-    while (i <= count) {
-        // Successive Op Codes
-        if (input[i] == "ADD") i = successiveOpCode(input, i, (OpCodeFunction) &ADD, true);
-        if (input[i] == "AND") i = successiveOpCode(input, i, (OpCodeFunction) &AND, true);
-        if (input[i] == "ORR") i = successiveOpCode(input, i, (OpCodeFunction) &ORR, true);
-        if (input[i] == "SUB") i = successiveOpCode(input, i, (OpCodeFunction) &SUB, true);
-        if (input[i] == "XOR") i = successiveOpCode(input, i, (OpCodeFunction) &XOR, true);
+    uint32_t i = 0; 
+    while (i < count) {
+        unsigned char opCode = stringToOpCode(input[i]);  // Get opCode
+        unsigned char Rd = stringToRegister(input[i+1]);  // Get RD
+        uint32_t oldVal;
+        uint32_t Rn = regs[stringToRegister(input[i+3])]; // Get Rn (if there is one)
 
-        //isolated Op Codes
-        if (input[i] == "ASR") i = successiveOpCode(input, i, (OpCodeFunction) &ASR, false);
-        if (input[i] == "LSR") i = successiveOpCode(input, i, (OpCodeFunction) &LSR, false);
-        if (input[i] == "LSL") i = successiveOpCode(input, i, (OpCodeFunction) &LSL, false);
-        if (input[i] == "NOT") i = successiveOpCode(input, i, (OpCodeFunction) &NOT, false);
-        i++;
+        if (opCode == MOV) {
+            oldVal = moveRegister(Rd, stringToHex(input[i+3]));
+            // Register Printouts
+        }
+
+        if (input [i+4] == ",") {  // This is a dual OP Code like add, sub, etc
+            uint32_t Rm = regs[stringToRegister(input[i+5])];  // get RM
+
+            oldVal = regs[Rd];
+            regs[Rd] = ALU::ALUOPCode(opCode, Rn, Rm);
+        } 
+        
+        else {  // This is a single op code like shifts
+            oldVal = regs[Rd];
+            regs[Rd] = ALU::ALUOPCode(opCode, Rn, 0);
+        }
     }
+
+    // Important Array Input information
+    // MOV RD , RN , RM
+    // 0    1 2  3 4  5
 
     return 0;
 }
 
-int successiveOpCode(string arr[], int index, OpCodeFunction opCode, bool iter) {
-    cout << arr[index] << " : ";
+uint32_t moveRegister(unsigned char destination, uint32_t value) {
+    uint32_t previousValue = regs[destination];
+    regs[destination] = value;
+    return previousValue;
+}
 
-    index++;  // go to location of first operand
-
-    // Retrive the first value
-    uint32_t cumulative;
-    stringstream base; // new, clean stringstream
-    
-    base << hex << arr[index]; // read in raw as hex type
-    base >> cumulative;  // input into cumulative;
-
-    index++;  // move to (what could be) second operand
-
-    if (!iter) cumulative = opCode(cumulative, 0);  // if not iteratable, then run on single instruction and punt out
-
-    // Otherwise, we iterate on the instruction
-    while (arr[index][0] >= 48 && arr[index][0] <= 57 && iter) {  //ASCII range of numerical characters. Check to make sure not a command
-        //TODO: add support for other bases?
-        uint32_t operand;
-        stringstream raw; // new, clean stringstream
-
-        raw << hex << arr[index]; // read in raw as hex type
-        raw >> operand;  // input into operand;
-
-        index++; // move to next loaction
-
-        // perform calculation
-        if (iter) { cumulative = opCode(cumulative, operand); } // call successive op code
-
+unsigned char stringToOpCode(string input) {
+    for (unsigned char i = 0; i < 10; i++) {
+        if (input == ALUCodec[i]) return i;
     }
-    
-    hexPrint(cumulative);
-
-    return index-1;  // we've jumped to next command return prior index
+    return -1;
 }
 
-uint32_t ADD(uint32_t c, uint32_t o) { return c + o; } // Addative
-uint32_t AND(uint32_t c, uint32_t o) { return c & o; } // bitwise and
-uint32_t LSR(uint32_t c, uint32_t o) { return c >> 1; }
-uint32_t LSL(uint32_t c, uint32_t o) { return c << 1; }
-uint32_t NOT(uint32_t c, uint32_t o) { return ~c; }
-uint32_t ORR(uint32_t c, uint32_t o) { return c | o; } // bitwise or
-uint32_t SUB(uint32_t c, uint32_t o) { return c - o; } // subtractive
-uint32_t XOR(uint32_t c, uint32_t o) { return c ^ o; } // bitwise xor
-uint32_t ASR(uint32_t c, uint32_t o) {
-    if (c >= 0x80000000) return (c >> 1) + 0x80000000; // if the msb is a 1, we must preserve it
-    return c >> 1;  // otherwise, we good
+unsigned char stringToRegister(string input) {
+    for (unsigned char i = 0; i < 8; i++) {
+        if (input == RegCodec[i]) return i;
+    }
+    return -1;
 }
 
-void hexPrint(uint32_t& result) { cout << "Result: 0x" << hex << result << endl; }  // Printing
+uint32_t stringToHex(string input) {
+    uint32_t conv;
+    stringstream raw; // new, clean stringstream
+
+    raw << hex << input; // read in raw as hex type
+    raw >> conv;  // input into operand;
+    return conv;
+}
