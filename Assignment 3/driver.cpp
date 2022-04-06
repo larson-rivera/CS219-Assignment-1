@@ -1,6 +1,6 @@
-//Programming Task 2: OP Code Simulator -- Main Driver
+//Programming Task 3: ALU OP Code Simulator -- Main Driver
 //Author: Larson Rivera
-//Last modified: 2/26/2022
+//Last modified: 4/5/2022
 
 #include <iostream>
 #include <string>
@@ -60,7 +60,10 @@ int main() {
     uint32_t i = 0; 
     while (i < count) {
 
-        if (input[i].compare("END") == 0) break; // Condition for end of program
+        if (input[i].compare("END") == 0) { // Condition for end of program
+            cout << "END" << endl;
+            break;
+        }
 
         int opCode = stringToOpCode(input[i]);  // Get opCode
         int Rd = stringToRegister(input[i+1]);  // Get RD
@@ -70,6 +73,9 @@ int main() {
         if (opCode == 9) {
             if (input[i+2][0] == 'R') oldVal = moveRegister(Rd, regs[stringToRegister(input[i+2])]); // moving registers
             else oldVal = moveRegister(Rd, stringToHex(input[i+2]));  // moving literal values
+
+            // Printing
+            cout << input[i] << " " <<  input[i+1] << " " << input[i+2] << endl;
             i += 3;
         }
 
@@ -79,6 +85,7 @@ int main() {
 
             oldVal = regs[Rd];
             regs[Rd] = ALUOPCode(opCode, Rn, Rm);
+            cout << input[i] << " " <<  input[i+1] << " " << input[i+2] << " " << input[i+3] << endl;
             i += 4;
         } 
         
@@ -86,6 +93,7 @@ int main() {
             Rn = regs[stringToRegister(input[i+2])];
             oldVal = regs[Rd];
             regs[Rd] = ALUOPCode(opCode, Rn, 0);
+            cout << input[i] << " " <<  input[i+1] << " " << input[i+2] << endl;
             i += 3;
         }
 
@@ -129,7 +137,7 @@ uint32_t stringToHex(string input) {
 }
 
 void opCodePrintout(int opc, int r, uint32_t old, uint32_t ne) {
-    cout << "OPCode " << ALUCodec[opc] << " is modifying Register " << RegCodec[r] << "\n";
-    cout << "\t Old Value: " << old << "\n";
-    cout << "\t New Value: " << ne << endl << endl;
+    cout << "\tRegister " << RegCodec[r] << ":\n";
+    cout << "\t \tOld Value: 0x" << hex << old << "\n";
+    cout << "\t \tNew Value: 0x" << hex << ne << endl << endl;
 }

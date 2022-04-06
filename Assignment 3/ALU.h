@@ -1,3 +1,7 @@
+//Programming Task 3: ALU OP Code Simulator -- ALU header
+//Author: Larson Rivera
+//Last modified: 4/5/2022
+
 #ifndef ALU_H
 #define ALU_H
 
